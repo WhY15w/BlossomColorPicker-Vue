@@ -4,6 +4,8 @@ A Vue.js component for a color picker with a beautiful design and smooth interac
 
 Translated from https://github.com/dayflow-js/BlossomColorPicker
 
+demo: https://why15w.github.io/BlossomColorPicker-Vue/
+
 <img src="./img/img.png" alt="Blossom Color Picker Vue" width="400">
 
 ## Features
