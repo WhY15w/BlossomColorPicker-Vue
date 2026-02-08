@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
-  base: "/BlossomColorPicker/",
+  base: "/BlossomColorPicker-Vue/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
