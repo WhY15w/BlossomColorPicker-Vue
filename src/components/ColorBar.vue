@@ -1,10 +1,5 @@
 <template>
-  <svg
-    :width="size"
-    :height="size"
-    class="absolute pointer-events-none"
-    :style="svgStyle"
-  >
+  <svg :width="size" :height="size" class="absolute pointer-events-none" :style="svgStyle">
     <!-- Background track -->
     <circle
       :cx="size / 2"
@@ -27,25 +22,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { BLOOM_EASING } from '../constants';
-import { hslaToString } from '../utils';
+import { computed } from 'vue'
+import { BLOOM_EASING } from '../constants'
+import { hslaToString } from '../utils'
 
 const props = defineProps<{
-  hue: number;
-  saturation: number;
-  lightness: number;
-  alpha: number;
-  radius: number;
-  barWidth: number;
-  isExpanded: boolean;
-  animationDuration: number;
-}>();
+  hue: number
+  saturation: number
+  lightness: number
+  alpha: number
+  radius: number
+  barWidth: number
+  isExpanded: boolean
+  animationDuration: number
+}>()
 
-const size = computed(() => (props.radius + props.barWidth / 2) * 2 + 4);
+const size = computed(() => (props.radius + props.barWidth / 2) * 2 + 4)
 const color = computed(() =>
-  hslaToString(props.hue, props.saturation, props.lightness, props.alpha)
-);
+  hslaToString(props.hue, props.saturation, props.lightness, props.alpha),
+)
 
 const svgStyle = computed(() => ({
   left: '50%',
@@ -56,5 +51,5 @@ const svgStyle = computed(() => ({
   transform: props.isExpanded ? 'scale(1)' : 'scale(0.8)',
   transition: `opacity ${props.animationDuration}ms ${BLOOM_EASING}, transform ${props.animationDuration}ms ${BLOOM_EASING}`,
   zIndex: 5,
-}));
+}))
 </script>

@@ -1,19 +1,19 @@
-import { ref, watch, type Ref } from 'vue';
-import { BAR_WIDTH, SLIDER_OFFSET } from '../constants';
+import { ref, watch, type Ref } from 'vue'
+import { BAR_WIDTH, SLIDER_OFFSET } from '../constants'
 
-type SliderPosition = 'top' | 'bottom' | 'left' | 'right';
+type SliderPosition = 'top' | 'bottom' | 'left' | 'right'
 
 interface UseAdaptivePositionOptions {
-  isExpanded: Ref<boolean>;
-  containerRef: Ref<HTMLDivElement | null>;
-  containerSize: Ref<number>;
-  sliderPosition?: Ref<SliderPosition | undefined>;
-  adaptivePositioning: Ref<boolean>;
+  isExpanded: Ref<boolean>
+  containerRef: Ref<HTMLDivElement | null>
+  containerSize: Ref<number>
+  sliderPosition?: Ref<SliderPosition | undefined>
+  adaptivePositioning: Ref<boolean>
 }
 
 interface UseAdaptivePositionResult {
-  effectivePosition: Ref<SliderPosition>;
-  shiftOffset: Ref<{ x: number; y: number }>;
+  effectivePosition: Ref<SliderPosition>
+  shiftOffset: Ref<{ x: number; y: number }>
 }
 
 /**
@@ -29,79 +29,74 @@ export function useAdaptivePosition({
   adaptivePositioning,
 }: UseAdaptivePositionOptions): UseAdaptivePositionResult {
   const effectivePosition = ref<SliderPosition>(
-    sliderPosition?.value || 'right'
-  ) as Ref<SliderPosition>;
-  const shiftOffset = ref({ x: 0, y: 0 });
+    sliderPosition?.value || 'right',
+  ) as Ref<SliderPosition>
+  const shiftOffset = ref({ x: 0, y: 0 })
 
   watch(
-    [
-      isExpanded,
-      () => sliderPosition?.value,
-      containerSize,
-      adaptivePositioning,
-    ],
+    [isExpanded, () => sliderPosition?.value, containerSize, adaptivePositioning],
     () => {
       if (isExpanded.value && containerRef.value) {
-        const rect = containerRef.value.getBoundingClientRect();
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        const rect = containerRef.value.getBoundingClientRect()
+        const windowWidth = window.innerWidth
+        const windowHeight = window.innerHeight
 
-        const halfSize = containerSize.value / 2;
-        const centerX = rect.left + rect.width / 2 - shiftOffset.value.x;
-        const centerY = rect.top + rect.height / 2 - shiftOffset.value.y;
+        const halfSize = containerSize.value / 2
+        const centerX = rect.left + rect.width / 2 - shiftOffset.value.x
+        const centerY = rect.top + rect.height / 2 - shiftOffset.value.y
 
-        let newShiftX = 0;
-        let newShiftY = 0;
+        let newShiftX = 0
+        let newShiftY = 0
 
         if (adaptivePositioning.value) {
-          const padding = 10;
+          const padding = 10
 
           if (centerX + halfSize > windowWidth - padding) {
-            newShiftX = windowWidth - padding - (centerX + halfSize);
+            newShiftX = windowWidth - padding - (centerX + halfSize)
           } else if (centerX - halfSize < padding) {
-            newShiftX = padding - (centerX - halfSize);
+            newShiftX = padding - (centerX - halfSize)
           }
 
           if (centerY + halfSize > windowHeight - padding) {
-            newShiftY = windowHeight - padding - (centerY + halfSize);
+            newShiftY = windowHeight - padding - (centerY + halfSize)
           } else if (centerY - halfSize < padding) {
-            newShiftY = padding - (centerY - halfSize);
+            newShiftY = padding - (centerY - halfSize)
           }
 
-          shiftOffset.value = { x: newShiftX, y: newShiftY };
+          shiftOffset.value = { x: newShiftX, y: newShiftY }
         } else {
-          shiftOffset.value = { x: 0, y: 0 };
+          shiftOffset.value = { x: 0, y: 0 }
         }
 
         if (sliderPosition?.value) {
-          effectivePosition.value = sliderPosition.value;
-          return;
+          effectivePosition.value = sliderPosition.value
+          return
         }
 
-        const spaceRight = windowWidth - (centerX + newShiftX + halfSize);
-        const spaceLeft = centerX + newShiftX - halfSize;
-        const spaceTop = centerY + newShiftY - halfSize;
-        const spaceBottom = windowHeight - (centerY + newShiftY + halfSize);
+        const spaceRight = windowWidth - (centerX + newShiftX + halfSize)
+        const spaceLeft = centerX + newShiftX - halfSize
+        const spaceTop = centerY + newShiftY - halfSize
+        const spaceBottom = windowHeight - (centerY + newShiftY + halfSize)
 
-        const threshold = SLIDER_OFFSET + BAR_WIDTH + 20;
+        const threshold = SLIDER_OFFSET + BAR_WIDTH + 20
 
         if (spaceRight < threshold && spaceLeft > spaceRight) {
-          effectivePosition.value = 'left';
+          effectivePosition.value = 'left'
         } else if (spaceLeft < threshold && spaceRight > spaceLeft) {
-          effectivePosition.value = 'right';
+          effectivePosition.value = 'right'
         } else if (spaceBottom < threshold && spaceTop > spaceBottom) {
-          effectivePosition.value = 'top';
+          effectivePosition.value = 'top'
         } else if (spaceTop < threshold && spaceBottom > spaceTop) {
-          effectivePosition.value = 'bottom';
+          effectivePosition.value = 'bottom'
         } else {
-          effectivePosition.value = 'right';
+          effectivePosition.value = 'right'
         }
       } else if (!isExpanded.value) {
-        shiftOffset.value = { x: 0, y: 0 };
+        shiftOffset.value = { x: 0, y: 0 }
       }
     },
-    { flush: 'post' }
-  );
+    { flush: 'post' },
+  )
 
-  return { effectivePosition, shiftOffset };
+  return { effectivePosition, shiftOffset }
 }

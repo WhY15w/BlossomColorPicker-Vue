@@ -15,32 +15,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { BLOOM_EASING } from '../constants';
-import { hslToString, hslaToString } from '../utils';
+import { ref, computed } from 'vue'
+import { BLOOM_EASING } from '../constants'
+import { hslToString, hslaToString } from '../utils'
 
 const props = withDefaults(
   defineProps<{
-    hue: number;
-    saturation: number;
-    lightness: number;
-    index: number;
-    totalPetals: number;
-    isExpanded: boolean;
-    petalSize: number;
-    radius: number;
-    animationDuration: number;
-    staggerDelay: number;
-    zIndex: number;
-    rotationOffset?: number;
-    alpha?: number;
-    clip?: 'left' | 'right';
-    isExternalHover?: boolean;
-    pointerEvents?: 'auto' | 'none';
-    hasShadow?: boolean;
-    onClick?: () => void;
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
+    hue: number
+    saturation: number
+    lightness: number
+    index: number
+    totalPetals: number
+    isExpanded: boolean
+    petalSize: number
+    radius: number
+    animationDuration: number
+    staggerDelay: number
+    zIndex: number
+    rotationOffset?: number
+    alpha?: number
+    clip?: 'left' | 'right'
+    isExternalHover?: boolean
+    pointerEvents?: 'auto' | 'none'
+    hasShadow?: boolean
+    onClick?: () => void
+    onMouseEnter?: () => void
+    onMouseLeave?: () => void
   }>(),
   {
     rotationOffset: 0,
@@ -52,52 +52,46 @@ const props = withDefaults(
     onClick: undefined,
     onMouseEnter: undefined,
     onMouseLeave: undefined,
-  }
-);
+  },
+)
 
-const internalHover = ref(false);
+const internalHover = ref(false)
 
-const isHovered = computed(() => props.isExternalHover ?? internalHover.value);
+const isHovered = computed(() => props.isExternalHover ?? internalHover.value)
 
 const handleMouseEnter = () => {
-  internalHover.value = true;
-  props.onMouseEnter?.();
-};
+  internalHover.value = true
+  props.onMouseEnter?.()
+}
 
 const handleMouseLeave = () => {
-  internalHover.value = false;
-  props.onMouseLeave?.();
-};
+  internalHover.value = false
+  props.onMouseLeave?.()
+}
 
-const isInvisible = computed(() => props.alpha === 0);
+const isInvisible = computed(() => props.alpha === 0)
 
 const buttonStyle = computed(() => {
-  const angle =
-    (props.index / props.totalPetals) * 360 - 90 + props.rotationOffset;
-  const radian = (angle * Math.PI) / 180;
-  const x = Math.cos(radian) * props.radius;
-  const y = Math.sin(radian) * props.radius;
+  const angle = (props.index / props.totalPetals) * 360 - 90 + props.rotationOffset
+  const radian = (angle * Math.PI) / 180
+  const x = Math.cos(radian) * props.radius
+  const y = Math.sin(radian) * props.radius
 
   const color =
     props.alpha < 1
-      ? hslaToString(
-          props.hue,
-          props.saturation,
-          props.lightness,
-          props.alpha * 100
-        )
-      : hslToString(props.hue, props.saturation, props.lightness);
+      ? hslaToString(props.hue, props.saturation, props.lightness, props.alpha * 100)
+      : hslToString(props.hue, props.saturation, props.lightness)
 
-  const scale = isHovered.value ? 1.1 : 1;
+  const scale = isHovered.value ? 1.1 : 1
 
   const clipStyle: Record<string, string> =
     props.clip === 'left'
       ? { clipPath: 'polygon(0% -10%, 60% -10%, 60% 110%, 0% 110%)' }
       : props.clip === 'right'
         ? { clipPath: 'polygon(40% -10%, 100% -10%, 100% 110%, 40% 110%)' }
-        : {};
+        : {}
 
-  const stagger = props.isExpanded && !isHovered.value ? props.staggerDelay : 0;
+  const stagger = props.isExpanded && !isHovered.value ? props.staggerDelay : 0
 
   return {
     width: `${props.petalSize}px`,
@@ -107,10 +101,7 @@ const buttonStyle = computed(() => {
       ? `translate(${x}px, ${y}px) scale(${scale})`
       : 'translate(0, 0) scale(0)',
     opacity: props.isExpanded ? 1 : 0,
-    filter:
-      isHovered.value && !isInvisible.value
-        ? 'brightness(1.1)'
-        : 'brightness(1)',
+    filter: isHovered.value && !isInvisible.value ? 'brightness(1.1)' : 'brightness(1)',
     transition: `transform ${props.animationDuration}ms ${BLOOM_EASING} ${stagger}ms,
                  opacity ${props.animationDuration}ms ${BLOOM_EASING} ${stagger}ms,
                  background-color 200ms ease,
@@ -129,6 +120,6 @@ const buttonStyle = computed(() => {
     zIndex: props.zIndex,
     pointerEvents: props.pointerEvents,
     ...clipStyle,
-  } as Record<string, string | number>;
-});
+  } as Record<string, string | number>
+})
 </script>
